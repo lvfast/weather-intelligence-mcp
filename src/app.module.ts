@@ -5,6 +5,7 @@ import { QuotaModule } from './infrastructure/quota/quota.module.js';
 import { WeatherApiModule } from './infrastructure/weatherapi/weatherapi.module.js';
 import { LocationModule } from './application/location/location.module.js';
 import { WeatherModule } from './application/weather/weather.module.js';
+import { AssessmentModule } from './application/assessment/assessment.module.js';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { WeatherModule } from './application/weather/weather.module.js';
     WeatherApiModule,
     LocationModule,
     WeatherModule,
+    AssessmentModule,
   ],
 })
 export class AppModule {}
