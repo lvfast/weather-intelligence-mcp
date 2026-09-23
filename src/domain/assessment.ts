@@ -28,7 +28,8 @@ export interface RuleFinding {
 }
 
 export interface AssessmentSlot {
-  time: string;
+  window: { startTime: string; endTime: string };
+  source: 'current' | 'forecast';
   condition: NormalizedCondition;
   temperatureC: number;
   feelsLikeC: number;
