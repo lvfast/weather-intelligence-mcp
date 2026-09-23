@@ -1,4 +1,5 @@
 import { All, Controller, Inject, Module, Req, Res } from '@nestjs/common';
+import { ApiExcludeController } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import type { NodeMcpRequestHandler } from '@modelcontextprotocol/node';
 import {
@@ -25,6 +26,7 @@ import {
 export const MCP_SERVER_FACTORY = Symbol('MCP_SERVER_FACTORY');
 export const MCP_HTTP_HANDLER = Symbol('MCP_HTTP_HANDLER');
 
+@ApiExcludeController()
 @Controller('mcp')
 export class McpController {
   constructor(@Inject(MCP_HTTP_HANDLER) private readonly handler: NodeMcpRequestHandler) {}
