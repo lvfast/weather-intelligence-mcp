@@ -1,5 +1,9 @@
 # Weather Intelligence Service
 
+[![CI](https://github.com/lvfast/weather-intelligence-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/lvfast/weather-intelligence-mcp/actions/workflows/ci.yml)
+[![Node.js 24](https://img.shields.io/badge/node-24%20LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A production-minded NestJS backend that exposes normalized WeatherAPI.com data and
 deterministic, explainable activity-risk assessments through **REST**, **MCP stdio**,
 and **stateless MCP Streamable HTTP**.
