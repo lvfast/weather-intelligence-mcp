@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import type { AppConfig } from '../../config/config.schema.js';
-import { APP_CONFIG } from '../../config/config.module.js';
+import { APP_CONFIG, ConfigModule } from '../../config/config.module.js';
 import {
   EMERGENCY_LIMITER,
   PROVIDER_QUOTA,
@@ -12,7 +12,7 @@ import { QuotaModule } from '../quota/quota.module.js';
 import { WeatherApiClient } from './weatherapi.client.js';
 
 @Module({
-  imports: [QuotaModule],
+  imports: [ConfigModule, QuotaModule],
   providers: [
     {
       provide: WEATHER_PROVIDER,

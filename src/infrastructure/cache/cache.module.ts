@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import type { AppConfig } from '../../config/config.schema.js';
-import { APP_CONFIG } from '../../config/config.module.js';
+import { APP_CONFIG, ConfigModule } from '../../config/config.module.js';
 import { CACHE_STORE, CLOCK, type Clock } from '../../domain/ports.js';
 import { SystemClock } from '../clock/system-clock.js';
 import { MemoryCacheStore } from './memory-cache.store.js';
 import { RedisCacheStore } from './redis-cache.store.js';
 
 @Module({
+  imports: [ConfigModule],
   providers: [
     { provide: CLOCK, useClass: SystemClock },
     {

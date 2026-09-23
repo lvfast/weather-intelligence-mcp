@@ -3,6 +3,7 @@ import type {
   Clock,
   CurrentWeatherByRef,
   ResolvedLocationLookup,
+  ServiceResult,
   WeatherProvider,
 } from '../../domain/ports.js';
 import type { CurrentWeather } from '../../domain/weather.js';
@@ -28,15 +29,18 @@ export class CachedLocationLookup implements ResolvedLocationLookup, CurrentWeat
 
   async lookup(ref: ResolvedLocationRef, signal?: AbortSignal): Promise<Location> {
     const current = await this.getCurrentByRef(ref, signal);
-    return current.location;
+    return current.data.location;
   }
 
-  async getCurrentByRef(ref: ResolvedLocationRef, signal?: AbortSignal): Promise<CurrentWeather> {
+  async getCurrentByRef(
+    ref: ResolvedLocationRef,
+    signal?: AbortSignal,
+  ): Promise<ServiceResult<CurrentWeather>> {
     const key =
       'locationId' in ref
         ? buildCurrentWeatherByIdKey(ref.locationId)
         : buildCurrentWeatherKey(ref.coordinates.lat, ref.coordinates.lon);
-    const result = await loadCached<CurrentWeather>({
+    return loadCached<CurrentWeather>({
       key,
       freshTtlSeconds: CURRENT_FRESH_TTL_SECONDS,
       staleMaxAgeSeconds: CURRENT_STALE_MAX_AGE_SECONDS,
@@ -47,6 +51,5 @@ export class CachedLocationLookup implements ResolvedLocationLookup, CurrentWeat
       signal,
       loader: (loaderSignal) => this.provider.getCurrent(ref, loaderSignal),
     });
-    return result.data;
   }
 }

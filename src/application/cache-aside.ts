@@ -57,7 +57,16 @@ function resultFromEntry<T>(
 }
 
 export async function loadCached<T>(options: LoadCachedOptions<T>): Promise<ServiceResult<T>> {
-  const physical = await options.cache.get<CacheEntry<T>>(options.key);
+  let physical: CacheEntry<CacheEntry<T>> | null = null;
+  try {
+    physical = await options.cache.get<CacheEntry<T>>(options.key);
+  } catch (error) {
+    if (isAppError(error) && error.code === 'CACHE_UNAVAILABLE') {
+      physical = null;
+    } else {
+      throw error;
+    }
+  }
   const entry = physical?.value ?? null;
   const now = options.clock.now().getTime();
 

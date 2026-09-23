@@ -140,8 +140,23 @@ export interface FakeCurrentWeatherByRef {
 export function makeCurrentWeatherByRef(): FakeCurrentWeatherByRef {
   return {
     getCurrentByRef: vi
-      .fn<(ref: ResolvedLocationRef, signal?: AbortSignal) => Promise<CurrentWeather>>()
-      .mockResolvedValue(makeCurrent()),
+      .fn<
+        (
+          ref: ResolvedLocationRef,
+          signal?: AbortSignal,
+        ) => Promise<{ data: CurrentWeather; meta: unknown }>
+      >()
+      .mockResolvedValue({
+        data: makeCurrent(),
+        meta: {
+          requestId: 'test-request-id',
+          provider: 'weatherapi',
+          fetchedAt: '2026-09-23T10:00:00.000Z',
+          cached: false,
+          stale: false,
+          warnings: [],
+        },
+      }),
   };
 }
 

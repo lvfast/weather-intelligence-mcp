@@ -32,7 +32,10 @@ export interface ResolvedLocationLookup {
 }
 
 export interface CurrentWeatherByRef {
-  getCurrentByRef(ref: ResolvedLocationRef, signal?: AbortSignal): Promise<CurrentWeather>;
+  getCurrentByRef(
+    ref: ResolvedLocationRef,
+    signal?: AbortSignal,
+  ): Promise<ServiceResult<CurrentWeather>>;
 }
 
 export interface Clock {

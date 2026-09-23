@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import type { AppConfig } from '../../config/config.schema.js';
-import { APP_CONFIG } from '../../config/config.module.js';
+import { APP_CONFIG, ConfigModule } from '../../config/config.module.js';
 import { CLOCK, EMERGENCY_LIMITER, PROVIDER_QUOTA, type Clock } from '../../domain/ports.js';
 import { CacheModule } from '../cache/cache.module.js';
 import { EmergencyLimiter } from './emergency-limiter.js';
@@ -8,7 +8,7 @@ import { MemoryProviderQuota } from './memory-provider-quota.js';
 import { RedisProviderQuota } from './redis-provider-quota.js';
 
 @Module({
-  imports: [CacheModule],
+  imports: [ConfigModule, CacheModule],
   providers: [
     {
       provide: PROVIDER_QUOTA,
