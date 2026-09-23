@@ -1,0 +1,20 @@
+[
+  {
+    "id": 2807,
+    "name": "Paris",
+    "region": "Ile-de-France",
+    "country": "France",
+    "lat": 48.86,
+    "lon": 2.35,
+    "url": "paris-ile-de-france-france"
+  },
+  {
+    "id": 3031587,
+    "name": "Paris",
+    "region": "Ontario",
+    "country": "Canada",
+    "lat": 43.2,
+    "lon": -80.38,
+    "url": "paris-ontario-canada"
+  }
+]

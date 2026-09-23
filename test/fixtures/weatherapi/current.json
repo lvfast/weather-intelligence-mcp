@@ -1,0 +1,32 @@
+{
+  "location": {
+    "name": "Paris",
+    "region": "Ile-de-France",
+    "country": "France",
+    "lat": 48.86,
+    "lon": 2.35,
+    "tz_id": "Europe/Paris",
+    "localtime_epoch": 1790123400,
+    "localtime": "2026-09-23 10:30"
+  },
+  "current": {
+    "last_updated_epoch": 1790123100,
+    "last_updated": "2026-09-23 10:25",
+    "temp_c": 21.0,
+    "is_day": 1,
+    "condition": {
+      "text": "Light rain",
+      "icon": "//cdn.weatherapi.com/weather/64x64/day/296.png",
+      "code": 1183
+    },
+    "wind_kph": 19.1,
+    "pressure_mb": 1013.0,
+    "precip_mm": 0.1,
+    "humidity": 64,
+    "cloud": 75,
+    "feelslike_c": 21.3,
+    "vis_km": 10.0,
+    "uv": 5.0,
+    "gust_kph": 24.6
+  }
+}
