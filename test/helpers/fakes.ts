@@ -24,6 +24,7 @@ import type {
   WeatherInterval,
   WeatherAlertsResult,
 } from '../../src/domain/weather.js';
+import type { WeatherAssessment } from '../../src/domain/assessment.js';
 
 export interface ControllableClock extends Clock {
   set(iso: string): void;
@@ -314,4 +315,82 @@ export function refById(id: string): ResolvedLocationRef {
 
 export function refByCoordinates(lat: number, lon: number): ResolvedLocationRef {
   return { coordinates: { lat, lon } };
+}
+
+export interface FakeLocationService {
+  resolve: ReturnType<typeof vi.fn>;
+  requireResolved: ReturnType<typeof vi.fn>;
+}
+
+export function makeLocationService(): FakeLocationService {
+  return {
+    resolve: vi.fn().mockResolvedValue({ status: 'resolved', location: makeLocation() }),
+    requireResolved: vi.fn().mockResolvedValue(makeLocation()),
+  };
+}
+
+function serviceResult<T>(data: T) {
+  return {
+    data,
+    meta: {
+      requestId: 'test-request-id',
+      provider: 'weatherapi' as const,
+      fetchedAt: '2026-09-23T10:00:00.000Z',
+      cached: false,
+      stale: false,
+      warnings: [] as string[],
+    },
+  };
+}
+
+export interface FakeWeatherService {
+  getCurrent: ReturnType<typeof vi.fn>;
+  getForecast: ReturnType<typeof vi.fn>;
+  getAlerts: ReturnType<typeof vi.fn>;
+}
+
+export function makeWeatherService(): FakeWeatherService {
+  return {
+    getCurrent: vi.fn().mockResolvedValue(serviceResult(makeCurrent())),
+    getForecast: vi.fn().mockResolvedValue(serviceResult(makeForecast())),
+    getAlerts: vi.fn().mockResolvedValue(serviceResult(makeAlertsResult())),
+  };
+}
+
+export interface FakeAssessmentService {
+  assess: ReturnType<typeof vi.fn>;
+}
+
+export function makeAssessment(): WeatherAssessment {
+  return {
+    activity: 'running',
+    location: makeLocation(),
+    window: {
+      startTime: '2026-09-23T10:00:00.000Z',
+      endTime: '2026-09-23T12:00:00.000Z',
+      timeZone: 'Europe/Paris',
+    },
+    riskScore: 20,
+    riskLevel: 'moderate',
+    recommendation: 'caution',
+    summary: 'Weather conditions for running around Paris indicate moderate risk.',
+    triggeredRules: [],
+    evidence: [],
+    mitigations: [],
+    ruleVersion: 'weather-activity-rules/1.0.0',
+    source: {
+      provider: 'weatherapi',
+      cached: false,
+      stale: false,
+      coverage: 'forecast-and-limited-alerts',
+    },
+    observedAt: '2026-09-23T10:00:00.000Z',
+    dataQuality: 'normal',
+  };
+}
+
+export function makeAssessmentService(): FakeAssessmentService {
+  return {
+    assess: vi.fn().mockResolvedValue(serviceResult(makeAssessment())),
+  };
 }

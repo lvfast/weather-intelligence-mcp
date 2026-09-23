@@ -19,7 +19,13 @@ export class RedisCacheStore implements CacheStore {
     redisUrl: string,
     private readonly clock: Clock,
   ) {
-    this.client = createClient({ url: redisUrl });
+    this.client = createClient({
+      url: redisUrl,
+      socket: {
+        reconnectStrategy: (retries) =>
+          retries < 2 ? Math.min(retries * 200, 1000) : new Error('Redis unavailable'),
+      },
+    });
   }
 
   async connect(): Promise<void> {
@@ -33,7 +39,11 @@ export class RedisCacheStore implements CacheStore {
   async close(): Promise<void> {
     this.connected = false;
     try {
-      await this.client.quit();
+      if (this.client.isReady) {
+        await this.client.quit();
+      } else {
+        await this.client.destroy();
+      }
     } catch {
       // already closed
     }
