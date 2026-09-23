@@ -1,0 +1,53 @@
+{
+  "name": "weather-intelligence-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Normalized WeatherAPI data and deterministic activity-risk assessments through REST and MCP.",
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "start:http": "node dist/entrypoints/http.js",
+    "start:stdio": "node dist/entrypoints/stdio.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/node": "2.0.0",
+    "@modelcontextprotocol/server": "2.0.0",
+    "@nestjs/common": "12.0.4",
+    "@nestjs/config": "12.0.1",
+    "@nestjs/core": "12.0.4",
+    "@nestjs/platform-express": "12.0.4",
+    "@nestjs/swagger": "12.0.2",
+    "@nestjs/terminus": "12.1.0",
+    "@nestjs/throttler": "6.7.0",
+    "luxon": "3.7.2",
+    "pino": "10.3.1",
+    "redis": "6.2.1",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/luxon": "3.7.5",
+    "@types/node": "26.6.2",
+    "@types/supertest": "7.2.1",
+    "@vitest/coverage-v8": "5.0.1",
+    "eslint": "10.11.0",
+    "prettier": "3.9.9",
+    "supertest": "7.3.0",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.1",
+    "vitest": "5.0.1"
+  }
+}
