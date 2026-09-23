@@ -14,7 +14,12 @@ import {
   weatherAssessmentSchema,
 } from '../../src/interfaces/common/schemas.js';
 import { createHttpTestApp } from '../helpers/http-app.js';
-import { makeCandidate, makeLocationService, makeWeatherService } from '../helpers/fakes.js';
+import {
+  makeAssessmentService,
+  makeCandidate,
+  makeLocationService,
+  makeWeatherService,
+} from '../helpers/fakes.js';
 
 let app: INestApplication;
 let baseUrl: string;
@@ -44,7 +49,11 @@ beforeAll(async () => {
   locationService = makeLocationService();
   weatherService = makeWeatherService();
   const created = await createHttpTestApp({
-    overrides: { locationService, weatherService },
+    overrides: {
+      locationService,
+      weatherService,
+      assessmentService: makeAssessmentService(),
+    },
   });
   app = created.app;
   await app.listen(0, '127.0.0.1');

@@ -25,8 +25,15 @@ import { requestIdOf, type RequestWithContext } from './request-context.js';
 import {
   alertsQuerySchema,
   assessmentBodySchema,
+  currentWeatherSchema,
   forecastQuerySchema,
+  forecastSchema,
+  locationResolutionSchema,
+  parseOutput,
   resolveLocationQuerySchema,
+  serviceResultSchema,
+  weatherAlertsResultSchema,
+  weatherAssessmentSchema,
   weatherLocationQuerySchema,
 } from '../common/schemas.js';
 import type { z } from 'zod';
@@ -98,10 +105,11 @@ function emptyMeta(request: RequestWithContext) {
   };
 }
 
-function envelope<T>(result: ServiceResult<T>, request: RequestWithContext) {
+function envelope<T>(result: ServiceResult<T>, request: RequestWithContext, schema: z.ZodType<T>) {
+  const validated = parseOutput(serviceResultSchema(schema), result);
   return {
-    data: result.data,
-    meta: { ...result.meta, requestId: requestIdOf(request) },
+    data: validated.data,
+    meta: { ...validated.meta, requestId: requestIdOf(request) },
   };
 }
 
@@ -120,7 +128,7 @@ export class LocationsController {
       { limit: parsed.limit },
       request.deadlineSignal,
     );
-    return { data: result, meta: emptyMeta(request) };
+    return { data: parseOutput(locationResolutionSchema, result), meta: emptyMeta(request) };
   }
 }
 
@@ -140,6 +148,7 @@ export class WeatherController {
     return envelope(
       await this.weather.getCurrent(toLocationInput(parsed), request.deadlineSignal),
       request,
+      currentWeatherSchema,
     );
   }
 
@@ -155,6 +164,7 @@ export class WeatherController {
         request.deadlineSignal,
       ),
       request,
+      forecastSchema,
     );
   }
 
@@ -166,6 +176,7 @@ export class WeatherController {
     return envelope(
       await this.weather.getAlerts(toLocationInput(parsed), request.deadlineSignal),
       request,
+      weatherAlertsResultSchema,
     );
   }
 
@@ -174,6 +185,10 @@ export class WeatherController {
   @ApiOperation({ operationId: 'assessWeatherConditions' })
   async assess(@Body() body: unknown, @Req() request: RequestWithContext) {
     const parsed = parseOrThrow(assessmentBodySchema, body);
-    return envelope(await this.assessments.assess(parsed, request.deadlineSignal), request);
+    return envelope(
+      await this.assessments.assess(parsed, request.deadlineSignal),
+      request,
+      weatherAssessmentSchema,
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { locationInputSchema, type LocationInput } from '../../domain/location.js';
 import { ACTIVITIES } from '../../domain/assessment.js';
+import { AppError } from '../../domain/errors.js';
 
 export const enumSchema = <T extends readonly [string, ...string[]]>(values: T) => z.enum(values);
 
@@ -113,12 +114,12 @@ export function mcpLocationToLocationInput(input: McpLocationInput): LocationInp
 
 export const resolveLocationToolInputSchema = z.strictObject({
   query: z.string().trim().min(1).max(200),
-  limit: z.number().int().min(1).max(10).optional(),
+  limit: z.number().int().optional(),
 });
 
 export const forecastToolInputSchema = mcpLocationInputBase
   .extend({
-    days: z.number().int().min(1).max(3).optional(),
+    days: z.number().int().optional(),
     includeHourly: z.boolean().optional(),
   })
   .superRefine(exactlyOneMcpLocationForm);
@@ -312,3 +313,13 @@ export const errorEnvelopeSchema = z.object({
     requestId: z.string().optional(),
   }),
 });
+
+export function parseOutput<T>(schema: z.ZodType<T>, value: unknown): T {
+  const parsed = schema.safeParse(value);
+  if (!parsed.success) {
+    throw new AppError('INTERNAL_ERROR', 'Internal result validation failed.', {
+      cause: parsed.error,
+    });
+  }
+  return parsed.data;
+}

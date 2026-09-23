@@ -10,6 +10,7 @@ import {
   forecastToolInputSchema,
   mcpLocationInputSchema,
   mcpLocationToLocationInput,
+  parseOutput,
   resolveLocationToolInputSchema,
   serviceResultSchema,
   weatherAlertsResultSchema,
@@ -113,6 +114,7 @@ export function registerWeatherTools(
           context.mcpReq.signal,
         );
         logToolCompletion(logger, 'resolve_location', startedAt, resolution.status);
+        parseOutput(locationResolutionSchema, resolution);
         return toMcpResolutionResult(resolution);
       } catch (error) {
         logToolFailure(logger, 'resolve_location', startedAt);
@@ -139,6 +141,7 @@ export function registerWeatherTools(
           context.mcpReq.signal,
         );
         logToolCompletion(logger, 'get_current_weather', startedAt, 'resolved');
+        parseOutput(serviceResultSchema(currentWeatherSchema), result);
         return toMcpSuccess(result);
       } catch (error) {
         logToolFailure(logger, 'get_current_weather', startedAt);
@@ -166,6 +169,7 @@ export function registerWeatherTools(
           context.mcpReq.signal,
         );
         logToolCompletion(logger, 'get_weather_forecast', startedAt, 'resolved');
+        parseOutput(serviceResultSchema(forecastSchema), result);
         return toMcpSuccess(result);
       } catch (error) {
         logToolFailure(logger, 'get_weather_forecast', startedAt);
@@ -193,6 +197,7 @@ export function registerWeatherTools(
           context.mcpReq.signal,
         );
         logToolCompletion(logger, 'get_weather_alerts', startedAt, 'resolved');
+        parseOutput(serviceResultSchema(weatherAlertsResultSchema), result);
         return toMcpSuccess(result);
       } catch (error) {
         logToolFailure(logger, 'get_weather_alerts', startedAt);
@@ -225,6 +230,7 @@ export function registerWeatherTools(
           context.mcpReq.signal,
         );
         logToolCompletion(logger, 'assess_weather_conditions', startedAt, 'assessed');
+        parseOutput(serviceResultSchema(weatherAssessmentSchema), result);
         return toMcpSuccess(result);
       } catch (error) {
         logToolFailure(logger, 'assess_weather_conditions', startedAt);
