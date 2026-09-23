@@ -61,9 +61,7 @@ export async function loadCached<T>(options: LoadCachedOptions<T>): Promise<Serv
   try {
     physical = await options.cache.get<CacheEntry<T>>(options.key);
   } catch (error) {
-    if (isAppError(error) && error.code === 'CACHE_UNAVAILABLE') {
-      physical = null;
-    } else {
+    if (!(isAppError(error) && error.code === 'CACHE_UNAVAILABLE')) {
       throw error;
     }
   }
