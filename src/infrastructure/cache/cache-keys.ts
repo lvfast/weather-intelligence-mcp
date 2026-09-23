@@ -6,6 +6,10 @@ export function normalizeQuery(query: string): string {
   return query.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
+export function normalizeQueryPreservingCase(query: string): string {
+  return query.normalize('NFKC').trim().replace(/\s+/g, ' ');
+}
+
 export function roundCoordinate(value: number): number {
   return Math.round(value * 10_000) / 10_000;
 }
@@ -24,6 +28,10 @@ export function buildLocationSearchKey(query: string, limit = 5): string {
 
 export function buildCurrentWeatherKey(latitude: number, longitude: number): string {
   return `${CACHE_NAMESPACE}:current:${coordinateKey(latitude, longitude)}`;
+}
+
+export function buildCurrentWeatherByIdKey(locationId: string): string {
+  return `${CACHE_NAMESPACE}:current:id:${locationId}`;
 }
 
 export interface ForecastKeyParameters {

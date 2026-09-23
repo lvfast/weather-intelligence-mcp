@@ -1,4 +1,4 @@
-import type { LocationCandidate, ResolvedLocationRef } from './location.js';
+import type { Location, LocationCandidate, ResolvedLocationRef } from './location.js';
 import type { CurrentWeather, WeatherAlert, WeatherForecast } from './weather.js';
 
 export interface WeatherProvider {
@@ -25,6 +25,14 @@ export interface ProviderQuota {
 
 export interface EmergencyLimiter {
   reserve(attempts: number): Promise<QuotaReservation>;
+}
+
+export interface ResolvedLocationLookup {
+  lookup(ref: ResolvedLocationRef, signal?: AbortSignal): Promise<Location>;
+}
+
+export interface CurrentWeatherByRef {
+  getCurrentByRef(ref: ResolvedLocationRef, signal?: AbortSignal): Promise<CurrentWeather>;
 }
 
 export interface Clock {
@@ -66,6 +74,7 @@ export const PROVIDER_QUOTA = Symbol('PROVIDER_QUOTA');
 export const CLOCK = Symbol('CLOCK');
 export const EMERGENCY_LIMITER = Symbol('EMERGENCY_LIMITER');
 export const RESOLVED_LOCATION_LOOKUP = Symbol('RESOLVED_LOCATION_LOOKUP');
+export const CURRENT_WEATHER_BY_REF = Symbol('CURRENT_WEATHER_BY_REF');
 export const LOCATION_SERVICE = Symbol('LOCATION_SERVICE');
 export const WEATHER_SERVICE = Symbol('WEATHER_SERVICE');
 export const ASSESSMENT_SERVICE = Symbol('ASSESSMENT_SERVICE');
