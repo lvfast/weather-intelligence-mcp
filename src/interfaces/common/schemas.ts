@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { locationInputSchema } from '../../domain/location.js';
+import { locationInputSchema, type LocationInput } from '../../domain/location.js';
 import { ACTIVITIES } from '../../domain/assessment.js';
 
 export const enumSchema = <T extends readonly [string, ...string[]]>(values: T) => z.enum(values);
@@ -68,6 +68,68 @@ export const assessmentBodySchema = z
   })
   .strict();
 
+const mcpLocationInputBase = z.strictObject({
+  query: z.string().trim().min(1).max(200).optional(),
+  locationId: z.string().min(1).max(200).optional(),
+  coordinates: z
+    .strictObject({
+      lat: z.number().min(-90).max(90),
+      lon: z.number().min(-180).max(180),
+    })
+    .optional(),
+});
+
+function exactlyOneMcpLocationForm(
+  value: { query?: string; locationId?: string; coordinates?: unknown },
+  context: z.RefinementCtx,
+): void {
+  const forms = [value.query, value.locationId, value.coordinates].filter(
+    (form) => form !== undefined,
+  ).length;
+  if (forms !== 1) {
+    context.addIssue({
+      code: 'custom',
+      message: 'supply exactly one of query, locationId, or coordinates',
+    });
+  }
+}
+
+export const mcpLocationInputSchema = mcpLocationInputBase.superRefine(exactlyOneMcpLocationForm);
+
+export type McpLocationInput = z.infer<typeof mcpLocationInputSchema>;
+
+export function mcpLocationToLocationInput(input: McpLocationInput): LocationInput {
+  if (input.query !== undefined) {
+    return { query: input.query };
+  }
+  if (input.locationId !== undefined) {
+    return { locationId: input.locationId };
+  }
+  if (input.coordinates !== undefined) {
+    return { coordinates: input.coordinates };
+  }
+  throw new Error('mcpLocationToLocationInput requires a validated location form');
+}
+
+export const resolveLocationToolInputSchema = z.strictObject({
+  query: z.string().trim().min(1).max(200),
+  limit: z.number().int().min(1).max(10).optional(),
+});
+
+export const forecastToolInputSchema = mcpLocationInputBase
+  .extend({
+    days: z.number().int().min(1).max(3).optional(),
+    includeHourly: z.boolean().optional(),
+  })
+  .superRefine(exactlyOneMcpLocationForm);
+
+export const assessToolInputSchema = z.strictObject({
+  location: mcpLocationInputSchema,
+  activity: z.enum(ACTIVITIES),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+});
+
 export const conditionSchema = z.object({
   category: z.enum(['clear', 'cloudy', 'fog', 'rain', 'snow', 'sleet', 'thunderstorm', 'other']),
   intensity: z.enum(['light', 'moderate', 'heavy', 'unknown']),
@@ -99,6 +161,11 @@ export const locationResolutionSchema = z.discriminatedUnion('status', [
   z.object({ status: z.literal('ambiguous'), candidates: z.array(locationCandidateSchema) }),
   z.object({ status: z.literal('not_found'), candidates: z.array(locationCandidateSchema).max(0) }),
 ]);
+
+export const locationResolutionRequiredSchema = z.object({
+  status: z.literal('location_resolution_required'),
+  candidates: z.array(locationCandidateSchema),
+});
 
 export const weatherIntervalSchema = z.object({
   time: z.string(),

@@ -8,6 +8,7 @@ import { WeatherModule } from './application/weather/weather.module.js';
 import { AssessmentModule } from './application/assessment/assessment.module.js';
 import { RestModule } from './interfaces/rest/rest.module.js';
 import { HealthModule } from './interfaces/health/health.module.js';
+import { McpModule } from './interfaces/mcp/mcp.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { HealthModule } from './interfaces/health/health.module.js';
     AssessmentModule,
     RestModule,
     HealthModule,
+    McpModule,
   ],
 })
 export class AppModule {}
