@@ -23,7 +23,7 @@ describe('EmergencyLimiter', () => {
   });
 
   it('consumes one slot per attempt for retrying operations', async () => {
-    let now = 0;
+    const now = 0;
     const limiter = new EmergencyLimiter(5, () => now);
     await limiter.reserve(2);
     await expect(limiter.reserve(2)).resolves.toMatchObject({ used: 4 });
@@ -31,7 +31,7 @@ describe('EmergencyLimiter', () => {
   });
 
   it('reports the rolling reset time', async () => {
-    let now = 1_000_000;
+    const now = 1_000_000;
     const limiter = new EmergencyLimiter(5, () => now);
     const reservation = await limiter.reserve(1);
     expect(Date.parse(reservation.resetsAt)).toBe(now + 60_000);
