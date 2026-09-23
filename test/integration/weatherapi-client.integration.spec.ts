@@ -133,7 +133,7 @@ describe('WeatherApiClient', () => {
           jitter: 0.5,
         });
         await expect(client.getCurrent({ locationId: '2807' })).rejects.toMatchObject({
-          code: 'UPSTREAM_UNAVAILABLE',
+          code: 'LOCATION_NOT_FOUND',
         });
         expect(_requests).toHaveLength(1);
       },

@@ -11,13 +11,17 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage --config vitest.coverage.config.ts",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "test:all": "npm run test:coverage && npm run test:integration && npm run test:e2e",
+    "test:live": "vitest run test/live/weatherapi.live.spec.ts",
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "start:http": "node dist/entrypoints/http.js",
-    "start:stdio": "node dist/entrypoints/stdio.js"
+    "start:stdio": "node dist/entrypoints/stdio.js",
+    "start:dev:http": "node --watch --import tsx src/entrypoints/http.ts",
+    "start:dev:stdio": "node --watch --import tsx src/entrypoints/stdio.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/node": "2.0.0",
