@@ -6,6 +6,7 @@ import {
   asWeatherProvider,
   makeCache,
   makeClock,
+  makeCurrent,
   makeForecast,
   makeForecastDay,
   makeInterval,
@@ -104,6 +105,40 @@ describe('WeatherService.getCurrent', () => {
     const { service, provider } = buildService({ resolver });
     await expect(service.getCurrent(INPUT)).rejects.toMatchObject({ code: 'LOCATION_AMBIGUOUS' });
     expect(provider.getCurrent).not.toHaveBeenCalled();
+  });
+
+  it('reuses explicit location refs so coordinate and id inputs fetch current once', async () => {
+    const provider = makeProvider();
+    provider.getCurrent.mockResolvedValue(makeCurrent());
+    const resolver = makeResolver();
+    resolver.requireResolved.mockResolvedValue(makeLocation());
+    const cache = makeCache(makeClock());
+    const clock = makeClock();
+    const lookup = new CachedLocationLookup(
+      asWeatherProvider(provider),
+      asCacheStore(cache),
+      clock,
+    );
+    const service = new WeatherService(
+      resolver as unknown as LocationResolver,
+      lookup,
+      asWeatherProvider(provider),
+      asCacheStore(cache),
+      clock,
+    );
+
+    await service.getCurrent({ coordinates: { lat: 51.5074, lon: -0.1278 } });
+    await service.getCurrent({ coordinates: { lat: 51.5074, lon: -0.1278 } });
+    expect(provider.getCurrent).toHaveBeenCalledTimes(1);
+    expect(provider.getCurrent).toHaveBeenCalledWith(
+      { coordinates: { lat: 51.5074, lon: -0.1278 } },
+      undefined,
+    );
+
+    await service.getCurrent({ locationId: 'opaque-9' });
+    await service.getCurrent({ locationId: 'opaque-9' });
+    expect(provider.getCurrent).toHaveBeenCalledTimes(2);
+    expect(provider.getCurrent).toHaveBeenLastCalledWith({ locationId: 'opaque-9' }, undefined);
   });
 
   it('bypasses a failed cache read but honors the provider coordination result', async () => {

@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { AppError } from '../../domain/errors.js';
-import type { Location, LocationInput } from '../../domain/location.js';
+import type { Location, LocationInput, ResolvedLocationRef } from '../../domain/location.js';
 import type {
   CurrentWeather,
   WeatherAlert,
@@ -52,10 +52,7 @@ export class WeatherService {
     signal?: AbortSignal,
   ): Promise<ServiceResult<CurrentWeather>> {
     const location = await this.locations.requireResolved(input, signal);
-    return this.currentByRef.getCurrentByRef(
-      { coordinates: { lat: location.latitude, lon: location.longitude } },
-      signal,
-    );
+    return this.currentByRef.getCurrentByRef(refForInput(input, location), signal);
   }
 
   async getForecast(
@@ -129,4 +126,14 @@ export class WeatherService {
       },
     });
   }
+}
+
+function refForInput(input: LocationInput, location: Location): ResolvedLocationRef {
+  if ('locationId' in input) {
+    return { locationId: input.locationId };
+  }
+  if ('coordinates' in input) {
+    return { coordinates: input.coordinates };
+  }
+  return { coordinates: { lat: location.latitude, lon: location.longitude } };
 }

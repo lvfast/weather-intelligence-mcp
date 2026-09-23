@@ -21,11 +21,15 @@ describe.skipIf(!enabled)('live WeatherAPI smoke test', () => {
     const locations = new LocationService(client, cache, clock, lookup);
     const weather = new WeatherService(locations, lookup, client, cache, clock);
 
-    const result = await weather.getCurrent({ query: 'London' });
+    const result = await weather.getCurrent({
+      coordinates: { lat: 51.5074, lon: -0.1278 },
+    });
 
     expect(result.meta.provider).toBe('weatherapi');
-    expect(result.meta.cached).toBe(false);
+    expect(result.meta.stale).toBe(false);
     expect(result.data.location.name).toBeTruthy();
+    expect(result.data.location.country).toBe('United Kingdom');
+    expect(result.data.location.timeZone).toBe('Europe/London');
     expect(result.data.location.timeZone).toMatch(/^[A-Za-z_/+-]+$/);
     expect(typeof result.data.interval.temperatureC).toBe('number');
     expect(typeof result.data.interval.windKph).toBe('number');
