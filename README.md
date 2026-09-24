@@ -275,7 +275,6 @@ and is skipped by default and in CI.
   upstream traffic (no SSRF through inputs).
 - API keys exist only in server or client-managed environment configuration.
 
-
 ## License
 
 MIT — see `LICENSE`.
