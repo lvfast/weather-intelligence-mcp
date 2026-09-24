@@ -275,13 +275,6 @@ and is skipped by default and in CI.
   upstream traffic (no SSRF through inputs).
 - API keys exist only in server or client-managed environment configuration.
 
-## Phase 2 roadmap
-
-- Authentication and multi-tenant keys.
-- PostgreSQL-backed users, saved locations, and assessment history.
-- Metrics (Prometheus) and tracing.
-- Additional providers behind the existing `WeatherProvider` port.
-- Runtime-editable rule configuration with versioned rollout.
 
 ## License
 
