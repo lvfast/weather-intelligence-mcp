@@ -8,6 +8,12 @@ A production-minded NestJS backend that exposes normalized WeatherAPI.com data a
 deterministic, explainable activity-risk assessments through **REST**, **MCP stdio**,
 and **stateless MCP Streamable HTTP**.
 
+## Demo
+
+Codex assessing outdoor running conditions through the MCP server.
+
+![Codex assessing weather conditions for an outdoor run](docs/assets/weather-assessment-demo.png)
+
 ## Architecture
 
 One application core serves every interface. Ports-and-adapters keep dependencies
